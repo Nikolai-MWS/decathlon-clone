@@ -13,6 +13,21 @@ export function useProducts(query: ProductQuery) {
   });
 }
 
+export function useFacets(query: ProductQuery) {
+  return useQuery({
+    queryKey: ['facets', query],
+    queryFn: () => apiClient.getFacets(query),
+  });
+}
+
+export function useSuggestions(q: string) {
+  return useQuery({
+    queryKey: ['suggest', q],
+    queryFn: () => apiClient.getSuggestions(q),
+    enabled: q.trim().length >= 2,
+  });
+}
+
 export function useProduct(slug: string) {
   return useQuery({
     queryKey: ['product', slug],
