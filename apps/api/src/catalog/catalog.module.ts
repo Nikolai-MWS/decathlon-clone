@@ -6,6 +6,7 @@ import { Price } from './entities/price.entity';
 import { Product } from './entities/product.entity';
 import { ProductImage } from './entities/product-image.entity';
 import { ProductVariant } from './entities/product-variant.entity';
+import { ProductAttribute } from './entities/product-attribute.entity';
 import { Sku } from './entities/sku.entity';
 import { CatalogController } from './catalog.controller';
 import { CatalogService } from './catalog.service';
@@ -20,6 +21,7 @@ import { CatalogService } from './catalog.service';
       ProductImage,
       Sku,
       Price,
+      ProductAttribute,
     ]),
   ],
   controllers: [CatalogController],

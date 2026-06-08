@@ -6,6 +6,7 @@ import { Price } from '../catalog/entities/price.entity';
 import { Product } from '../catalog/entities/product.entity';
 import { ProductImage } from '../catalog/entities/product-image.entity';
 import { ProductVariant } from '../catalog/entities/product-variant.entity';
+import { ProductAttribute } from '../catalog/entities/product-attribute.entity';
 import { Sku } from '../catalog/entities/sku.entity';
 
 const img = (name: string, n: number) =>
@@ -422,13 +423,35 @@ const PRODUCTS: ProductSpec[] = [
   },
 ];
 
+function buildAttributes(spec: ProductSpec): ProductAttribute[] {
+  const rows: { section: ProductAttribute['section']; label: string; value: string }[] = [
+    { section: 'advantages', label: '', value: 'Качество, доказано от хиляди клиенти' },
+    { section: 'advantages', label: '', value: 'Отлично съотношение цена/качество' },
+    { section: 'advantages', label: '', value: 'Дизайн и тестове от DECATHLON' },
+    { section: 'specs', label: 'Марка', value: spec.brand },
+    { section: 'specs', label: 'Гаранция', value: '2 години' },
+    { section: 'specs', label: 'Цвят', value: spec.variants.map((v) => v.color).join(', ') },
+    { section: 'care', label: '', value: 'Съхранявай на сухо и проветриво място.' },
+    { section: 'care', label: '', value: 'Следвай инструкциите на етикета.' },
+    { section: 'environment', label: '', value: 'Произведено с грижа за околната среда.' },
+  ];
+  return rows.map((r, i) => {
+    const attr = new ProductAttribute();
+    attr.section = r.section;
+    attr.label = r.label;
+    attr.value = r.value;
+    attr.position = i;
+    return attr;
+  });
+}
+
 async function seed(): Promise<void> {
   const ds = await AppDataSource.initialize();
   console.log('Connected. Clearing existing catalog data...');
 
   // FK-safe truncate.
   await ds.query(
-    'TRUNCATE TABLE "skus","product_images","product_variants","prices","products","categories","brands" RESTART IDENTITY CASCADE',
+    'TRUNCATE TABLE "skus","product_images","product_variants","product_attributes","prices","products","categories","brands" RESTART IDENTITY CASCADE',
   );
 
   const brandRepo = ds.getRepository(Brand);
@@ -514,6 +537,8 @@ async function seed(): Promise<void> {
       });
       return variant;
     });
+
+    product.attributes = buildAttributes(spec);
 
     await productRepo.save(product);
     count++;

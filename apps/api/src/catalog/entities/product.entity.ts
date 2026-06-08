@@ -12,6 +12,7 @@ import { Brand } from './brand.entity';
 import { Category } from './category.entity';
 import { Price } from './price.entity';
 import { ProductVariant } from './product-variant.entity';
+import { ProductAttribute } from './product-attribute.entity';
 
 @Entity('products')
 export class Product {
@@ -51,6 +52,9 @@ export class Product {
 
   @OneToMany(() => ProductVariant, (variant) => variant.product, { cascade: true })
   variants!: ProductVariant[];
+
+  @OneToMany(() => ProductAttribute, (attr) => attr.product, { cascade: true })
+  attributes!: ProductAttribute[];
 
   @CreateDateColumn()
   createdAt!: Date;

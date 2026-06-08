@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useProduct } from './queries';
 import ProductReviews from './ProductReviews';
+import ProductInfoSections from './ProductInfoSections';
 import NotifyInStock from './NotifyInStock';
 import { useAddToCart } from '../cart/queries';
 import WishlistButton from '../wishlist/WishlistButton';
@@ -153,6 +154,7 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
+      <ProductInfoSections attributes={product.attributes} />
       <ProductReviews slug={product.slug} />
     </div>
   );

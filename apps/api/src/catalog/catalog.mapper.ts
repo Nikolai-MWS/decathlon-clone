@@ -65,6 +65,10 @@ export function toProductDetail(product: Product, breadcrumb: BreadcrumbDto[]): 
     })),
   }));
 
+  const attributes = [...(product.attributes ?? [])]
+    .sort((a, b) => a.position - b.position)
+    .map((attr) => ({ section: attr.section, label: attr.label, value: attr.value }));
+
   return {
     id: product.id,
     name: product.name,
@@ -76,6 +80,7 @@ export function toProductDetail(product: Product, breadcrumb: BreadcrumbDto[]): 
     ratingAvg: Number(product.ratingAvg),
     reviewCount: product.reviewCount,
     variants,
+    attributes,
   };
 }
 

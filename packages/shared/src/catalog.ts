@@ -52,6 +52,15 @@ export interface BreadcrumbDto {
   slug: string;
 }
 
+export type AttributeSection = 'advantages' | 'specs' | 'care' | 'environment';
+
+export interface ProductAttributeDto {
+  section: AttributeSection;
+  /** Key for spec rows; empty for bullet-style advantages. */
+  label: string;
+  value: string;
+}
+
 export interface ProductDetailDto {
   id: string;
   name: string;
@@ -63,6 +72,7 @@ export interface ProductDetailDto {
   ratingAvg: number;
   reviewCount: number;
   variants: VariantDto[];
+  attributes: ProductAttributeDto[];
 }
 
 export type ProductSort = 'newest' | 'price_asc' | 'price_desc' | 'rating';

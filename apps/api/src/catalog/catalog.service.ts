@@ -178,6 +178,7 @@ export class CatalogService {
         category: true,
         price: true,
         variants: { images: true, skus: true },
+        attributes: true,
       },
     });
     if (!product) {
