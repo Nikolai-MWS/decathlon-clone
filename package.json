@@ -2,8 +2,13 @@
   "name": "decathlon-clone",
   "version": "0.0.0",
   "private": true,
-  "engines": { "node": ">=20" },
-  "workspaces": ["apps/*", "packages/*"],
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "concurrently -n api,web -c blue,green \"npm:dev:api\" \"npm:dev:web\"",
     "dev:api": "npm run dev --workspace @decathlon/api",
@@ -14,8 +19,14 @@
     "format": "prettier --write \"**/*.{ts,tsx,json,md,css}\""
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.4",
     "concurrently": "^9.0.1",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^9.1.2",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^15.15.0",
     "prettier": "^3.3.3",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.2",
+    "typescript-eslint": "^8.61.0"
   }
 }
