@@ -6,7 +6,63 @@
 
 **Architecture:** pnpm-workspace monorepo with three packages: `apps/api` (NestJS, layered Controller→Service→Repository, TypeORM/PostgreSQL), `apps/web` (React + Vite + Tailwind + React Router + TanStack Query + react-i18next), and `packages/shared` (TypeScript types/DTOs imported by both). A trivial "health" feature is implemented end-to-end (shared type → API endpoint → web page) to prove the wiring, with tests at every layer.
 
-**Tech Stack:** pnpm, TypeScript 5, NestJS 11, TypeORM 0.3 + PostgreSQL (Docker), Jest + Supertest, React 19, Vite 6, Tailwind CSS 3.4, React Router 7, TanStack Query 5, react-i18next, Vitest + React Testing Library, ESLint + Prettier, GitHub Actions CI.
+**Tech Stack:** npm workspaces, TypeScript 5, NestJS 11, TypeORM 0.3 + PostgreSQL (Docker), Jest + Supertest, React 19, Vite 6, Tailwind CSS 3.4, React Router 7, TanStack Query 5, react-i18next, Vitest + React Testing Library, ESLint + Prettier, GitHub Actions CI.
+
+---
+
+## Package Manager: npm (authoritative)
+
+This project uses **npm workspaces** (not pnpm). The root `package.json` uses a
+`workspaces` array; there is no `pnpm-workspace.yaml`, no `packageManager` field,
+and no `workspace:` dependency protocol (use `"*"` for local packages). The lockfile
+is `package-lock.json`.
+
+Where any task below shows a `pnpm` command, run the npm equivalent per this table:
+
+| Plan shows (pnpm) | Run instead (npm) |
+|---|---|
+| `pnpm install` | `npm install` |
+| `pnpm -r build` / `pnpm build` | `npm run build --workspaces --if-present` |
+| `pnpm -r test` / `pnpm test` | `npm run test --workspaces --if-present` |
+| `pnpm lint` | `eslint . --max-warnings 0` |
+| `pnpm --filter <pkg> <script>` | `npm run <script> --workspace <pkg>` |
+| `pnpm --filter <pkg> test` | `npm run test --workspace <pkg>` |
+| `pnpm --filter <pkg> add <dep>` | `npm install <dep> --workspace <pkg>` |
+| `pnpm --filter <pkg> add -D <dep>` | `npm install -D <dep> --workspace <pkg>` |
+| `pnpm add -w -D <dep>` (root) | `npm install -D <dep>` (run in repo root) |
+
+Local package dependencies (e.g. `@decathlon/shared`) are declared as `"*"` instead
+of `"workspace:*"`. Each workspace `package.json` keeps its own `scripts` (`dev`,
+`build`, `lint`, `test`) so `npm run <script> --workspace <pkg>` works.
+
+The Task 1 root `package.json` below is the npm version actually committed:
+
+```json
+{
+  "name": "decathlon-clone",
+  "version": "0.0.0",
+  "private": true,
+  "engines": { "node": ">=20" },
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,green \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "npm run dev --workspace @decathlon/api",
+    "dev:web": "npm run dev --workspace @decathlon/web",
+    "build": "npm run build --workspaces --if-present",
+    "lint": "eslint . --max-warnings 0",
+    "test": "npm run test --workspaces --if-present",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md,css}\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.2"
+  }
+}
+```
+
+> Note: the root `lint` script references `eslint`, which is installed in Task 13.
+> Do not run `npm run lint` at the root until Task 13 is complete.
 
 ---
 
