@@ -1,20 +1,43 @@
 import {
+  type AddressDto,
+  type AddressInput,
+  type AuthResponseDto,
+  type AuthUserDto,
   type BrandDto,
   type CartDto,
   type CategoryNodeDto,
   type FacetsDto,
   type HealthStatus,
+  type LoginDto,
   type Paginated,
   type ProductCardDto,
   type ProductDetailDto,
   type ProductQuery,
+  type RegisterDto,
   type SuggestionDto,
 } from '@decathlon/shared';
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api';
 
+// Access token is held in memory and attached to requests. The refresh token
+// lives in an httpOnly cookie the browser sends automatically.
+let accessToken: string | null = null;
+export function setAccessToken(token: string | null): void {
+  accessToken = token;
+}
+
+function authHeaders(extra?: Record<string, string>): Record<string, string> {
+  return {
+    ...(extra ?? {}),
+    ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+  };
+}
+
 async function getJson<T>(path: string): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`, { credentials: 'include' });
+  const res = await fetch(`${BASE_URL}${path}`, {
+    credentials: 'include',
+    headers: authHeaders(),
+  });
   if (!res.ok) throw new Error(`Request failed: ${res.status}`);
   return (await res.json()) as T;
 }
@@ -23,7 +46,7 @@ async function sendJson<T>(method: string, path: string, body?: unknown): Promis
   const res = await fetch(`${BASE_URL}${path}`, {
     method,
     credentials: 'include',
-    headers: body ? { 'Content-Type': 'application/json' } : undefined,
+    headers: authHeaders(body ? { 'Content-Type': 'application/json' } : undefined),
     body: body ? JSON.stringify(body) : undefined,
   });
   if (!res.ok) {
@@ -67,4 +90,15 @@ export const apiClient = {
   updateCartItem: (itemId: string, quantity: number) =>
     sendJson<CartDto>('PATCH', `/cart/items/${itemId}`, { quantity }),
   removeCartItem: (itemId: string) => sendJson<CartDto>('DELETE', `/cart/items/${itemId}`),
+
+  register: (dto: RegisterDto) => sendJson<AuthResponseDto>('POST', '/auth/register', dto),
+  login: (dto: LoginDto) => sendJson<AuthResponseDto>('POST', '/auth/login', dto),
+  refresh: () => sendJson<AuthResponseDto>('POST', '/auth/refresh'),
+  logout: () => sendJson<{ ok: true }>('POST', '/auth/logout'),
+  getProfile: () => getJson<AuthUserDto>('/account/profile'),
+  listAddresses: () => getJson<AddressDto[]>('/account/addresses'),
+  addAddress: (input: AddressInput) => sendJson<AddressDto>('POST', '/account/addresses', input),
+  updateAddress: (id: string, input: AddressInput) =>
+    sendJson<AddressDto>('PATCH', `/account/addresses/${id}`, input),
+  removeAddress: (id: string) => sendJson<{ ok: true }>('DELETE', `/account/addresses/${id}`),
 };

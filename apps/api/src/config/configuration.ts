@@ -8,6 +8,12 @@ export interface AppConfig {
     password: string;
     name: string;
   };
+  jwt: {
+    accessSecret: string;
+    refreshSecret: string;
+    accessTtl: string;
+    refreshTtl: string;
+  };
 }
 
 export default (): AppConfig => ({
@@ -19,5 +25,11 @@ export default (): AppConfig => ({
     username: process.env.DB_USER ?? 'decathlon',
     password: process.env.DB_PASSWORD ?? 'decathlon',
     name: process.env.DB_NAME ?? 'decathlon',
+  },
+  jwt: {
+    accessSecret: process.env.JWT_ACCESS_SECRET ?? 'dev-access-secret-change-me',
+    refreshSecret: process.env.JWT_REFRESH_SECRET ?? 'dev-refresh-secret-change-me',
+    accessTtl: process.env.JWT_ACCESS_TTL ?? '15m',
+    refreshTtl: process.env.JWT_REFRESH_TTL ?? '7d',
   },
 });

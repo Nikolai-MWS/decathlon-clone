@@ -6,6 +6,8 @@ import { dataSourceOptions } from './database/data-source';
 import { HealthModule } from './health/health.module';
 import { CatalogModule } from './catalog/catalog.module';
 import { CartModule } from './cart/cart.module';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { CartModule } from './cart/cart.module';
     HealthModule,
     CatalogModule,
     CartModule,
+    UsersModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

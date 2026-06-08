@@ -2,6 +2,7 @@ import { Outlet, Link } from 'react-router-dom';
 import LanguageSwitcher from './LanguageSwitcher';
 import SearchBar from './SearchBar';
 import CartIndicator from './CartIndicator';
+import AccountLink from './AccountLink';
 import { useCategories } from '../features/catalog/queries';
 
 export default function Layout() {
@@ -16,6 +17,7 @@ export default function Layout() {
             DECATHLON
           </Link>
           <SearchBar />
+          <AccountLink />
           <CartIndicator />
           <LanguageSwitcher />
         </div>
