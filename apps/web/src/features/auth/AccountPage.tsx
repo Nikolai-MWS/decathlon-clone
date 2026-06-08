@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { type AddressInput } from '@decathlon/shared';
 import { useAuth } from './AuthContext';
@@ -50,9 +51,14 @@ export default function AccountPage() {
           </h1>
           <p className="text-gray-500">{user?.email}</p>
         </div>
-        <Button variant="secondary" onClick={() => void logout()}>
-          Изход
-        </Button>
+        <div className="flex items-center gap-4">
+          <Link to="/orders" className="text-sm text-brand underline">
+            Моите поръчки
+          </Link>
+          <Button variant="secondary" onClick={() => void logout()}>
+            Изход
+          </Button>
+        </div>
       </div>
 
       <section>

@@ -8,7 +8,11 @@ import {
   type CategoryNodeDto,
   type FacetsDto,
   type HealthStatus,
+  type CheckoutInput,
+  type CheckoutResponse,
+  type DeliveryOptionDto,
   type LoginDto,
+  type OrderDto,
   type Paginated,
   type ProductCardDto,
   type ProductDetailDto,
@@ -101,4 +105,11 @@ export const apiClient = {
   updateAddress: (id: string, input: AddressInput) =>
     sendJson<AddressDto>('PATCH', `/account/addresses/${id}`, input),
   removeAddress: (id: string) => sendJson<{ ok: true }>('DELETE', `/account/addresses/${id}`),
+
+  getDeliveryOptions: () => getJson<DeliveryOptionDto[]>('/checkout/options'),
+  checkout: (input: CheckoutInput) => sendJson<CheckoutResponse>('POST', '/checkout', input),
+  confirmPayment: (paymentIntentId: string, succeed: boolean) =>
+    sendJson<OrderDto>('POST', '/checkout/confirm', { paymentIntentId, succeed }),
+  getOrders: () => getJson<OrderDto[]>('/orders'),
+  getOrder: (id: string) => getJson<OrderDto>(`/orders/${id}`),
 };

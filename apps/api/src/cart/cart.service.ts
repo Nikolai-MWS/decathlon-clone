@@ -18,6 +18,15 @@ export class CartService {
     return this.carts.save(this.carts.create({ items: [] }));
   }
 
+  /** Public access to the fully-loaded cart entity (used by checkout). */
+  getCartEntity(cartId: string): Promise<Cart | null> {
+    return this.loadCart(cartId);
+  }
+
+  async clearCart(cartId: string): Promise<void> {
+    await this.items.delete({ cartId });
+  }
+
   /** Loads a cart with everything needed to render lines, or null. */
   private loadCart(cartId: string): Promise<Cart | null> {
     return this.carts

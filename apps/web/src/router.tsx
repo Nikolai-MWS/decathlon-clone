@@ -9,6 +9,9 @@ import LoginPage from './features/auth/LoginPage';
 import RegisterPage from './features/auth/RegisterPage';
 import AccountPage from './features/auth/AccountPage';
 import RequireAuth from './features/auth/RequireAuth';
+import CheckoutPage from './features/checkout/CheckoutPage';
+import OrderConfirmationPage from './features/checkout/OrderConfirmationPage';
+import OrdersPage from './features/checkout/OrdersPage';
 import HealthPage from './features/health/HealthPage';
 
 export const router = createBrowserRouter([
@@ -28,6 +31,16 @@ export const router = createBrowserRouter([
         element: (
           <RequireAuth>
             <AccountPage />
+          </RequireAuth>
+        ),
+      },
+      { path: 'checkout', element: <CheckoutPage /> },
+      { path: 'orders/:id', element: <OrderConfirmationPage /> },
+      {
+        path: 'orders',
+        element: (
+          <RequireAuth>
+            <OrdersPage />
           </RequireAuth>
         ),
       },

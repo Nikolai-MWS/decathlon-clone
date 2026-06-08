@@ -14,6 +14,10 @@ export interface AppConfig {
     accessTtl: string;
     refreshTtl: string;
   };
+  stripe: {
+    secretKey: string;
+    webhookSecret: string;
+  };
 }
 
 export default (): AppConfig => ({
@@ -31,5 +35,9 @@ export default (): AppConfig => ({
     refreshSecret: process.env.JWT_REFRESH_SECRET ?? 'dev-refresh-secret-change-me',
     accessTtl: process.env.JWT_ACCESS_TTL ?? '15m',
     refreshTtl: process.env.JWT_REFRESH_TTL ?? '7d',
+  },
+  stripe: {
+    secretKey: process.env.STRIPE_SECRET_KEY ?? '',
+    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? '',
   },
 });
