@@ -35,3 +35,11 @@ export function useProduct(slug: string) {
     enabled: !!slug,
   });
 }
+
+export function useRelated(slug: string) {
+  return useQuery({
+    queryKey: ['related', slug],
+    queryFn: () => apiClient.getRelated(slug),
+    enabled: !!slug,
+  });
+}

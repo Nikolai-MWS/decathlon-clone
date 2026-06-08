@@ -90,6 +90,7 @@ export const apiClient = {
   getSuggestions: (q: string) =>
     getJson<SuggestionDto[]>(`/products/suggest?q=${encodeURIComponent(q)}`),
   getProduct: (slug: string) => getJson<ProductDetailDto>(`/products/${slug}`),
+  getRelated: (slug: string) => getJson<ProductCardDto[]>(`/products/${slug}/related`),
 
   getCart: () => getJson<CartDto>('/cart'),
   addCartItem: (skuId: string, quantity: number) =>

@@ -41,6 +41,11 @@ export class CatalogController {
     return this.catalog.suggest(q);
   }
 
+  @Get('products/:slug/related')
+  getRelated(@Param('slug') slug: string): Promise<ProductCardDto[]> {
+    return this.catalog.getRelated(slug);
+  }
+
   @Get('products/:slug')
   getProduct(@Param('slug') slug: string): Promise<ProductDetailDto> {
     return this.catalog.getProductBySlug(slug);

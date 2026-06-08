@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Not, Repository, SelectQueryBuilder } from 'typeorm';
 import {
   type BrandDto,
   type BreadcrumbDto,
@@ -168,6 +168,18 @@ export class CatalogService {
       slug: p.slug,
       image: p.variants?.[0]?.images?.[0]?.url ?? null,
     }));
+  }
+
+  async getRelated(slug: string, limit = 4): Promise<ProductCardDto[]> {
+    const product = await this.products.findOne({ where: { slug } });
+    if (!product) return [];
+    const rows = await this.products.find({
+      where: { categoryId: product.categoryId, id: Not(product.id) },
+      relations: { brand: true, price: true, variants: { images: true } },
+      order: { ratingAvg: 'DESC' },
+      take: limit,
+    });
+    return rows.map(toProductCard);
   }
 
   async getProductBySlug(slug: string): Promise<ProductDetailDto> {

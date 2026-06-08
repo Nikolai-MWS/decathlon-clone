@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useProduct } from './queries';
 import ProductReviews from './ProductReviews';
 import ProductInfoSections from './ProductInfoSections';
+import RelatedProducts from './RelatedProducts';
 import NotifyInStock from './NotifyInStock';
 import { useAddToCart } from '../cart/queries';
 import WishlistButton from '../wishlist/WishlistButton';
@@ -156,6 +157,7 @@ export default function ProductDetailPage() {
 
       <ProductInfoSections attributes={product.attributes} />
       <ProductReviews slug={product.slug} />
+      <RelatedProducts slug={product.slug} />
     </div>
   );
 }
