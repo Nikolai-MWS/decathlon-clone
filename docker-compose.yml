@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: decathlon
+      POSTGRES_PASSWORD: decathlon
+      POSTGRES_DB: decathlon
+    ports:
+      # Host 5433 (5432 is commonly taken by a local/other Postgres); container stays 5432
+      - "5433:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+volumes:
+  db_data:
