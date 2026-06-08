@@ -53,6 +53,7 @@ const BRANDS = [
   'Kipsta',
   'Adidas',
   'Puma',
+  'Garmin',
 ];
 
 interface VariantSpec {
@@ -422,6 +423,73 @@ const PRODUCTS: ProductSpec[] = [
     variants: [{ color: 'Сиво', sizes: [{ size: '8', stock: 6 }, { size: '9', stock: 4 }, { size: '10', stock: 0 }] }],
   },
 ];
+
+// Procedurally broaden the catalog so every category has depth for browsing,
+// pagination, and facets. Deterministic (no randomness) for reproducible seeds.
+interface GenTemplate {
+  category: string;
+  noun: string; // base product noun (BG)
+  models: string[];
+  brands: string[];
+  sizeType: 'one' | 'shoe' | 'clothing';
+  baseEur: number;
+  colors: string[];
+}
+
+const GEN_TEMPLATES: GenTemplate[] = [
+  { category: 'cycling', noun: 'ВЕЛОСИПЕД', models: ['ROCKRIDER ST 120', 'ROCKRIDER ST 540', 'RIVERSIDE 120', 'ELOPS 120'], brands: ['Btwin', 'Rockrider'], sizeType: 'one', baseEur: 29999, colors: ['Черен', 'Син'] },
+  { category: 'running', noun: 'МАРАТОНКИ', models: ['KIPRUN KD500', 'KIPRUN KS900', 'JOGFLOW 500', 'RUN ACTIVE'], brands: ['Kiprun'], sizeType: 'shoe', baseEur: 6999, colors: ['Черно', 'Синьо'] },
+  { category: 'camping', noun: 'ПАЛАТКА', models: ['MH100 3-МЕСТНА', 'ARPENAZ 4.2', 'AIR SECONDS 3', 'QUICKHIKER 2'], brands: ['Quechua'], sizeType: 'one', baseEur: 8999, colors: ['Сиво', 'Зелено'] },
+  { category: 'fitness', noun: 'КОМПЛЕКТ ЗА ФИТНЕС', models: ['STRONG 100', 'CROSS 500', 'CARDIO 120', 'YOGA ESSENTIAL'], brands: ['Domyos'], sizeType: 'one', baseEur: 3999, colors: ['Черно'] },
+  { category: 'water-sports', noun: 'НЕОПРЕН', models: ['100 1.5MM', '500 4/3MM', 'OWS 900', 'SURF 100'], brands: ['Tribord'], sizeType: 'clothing', baseEur: 5999, colors: ['Черно', 'Синьо'] },
+  { category: 'football', noun: 'ЕКИП ЗА ФУТБОЛ', models: ['VIRALTO 1', 'F100', 'ESSENTIEL', 'TRAXIUM'], brands: ['Kipsta', 'Adidas', 'Puma'], sizeType: 'clothing', baseEur: 2499, colors: ['Червено', 'Бяло'] },
+  { category: 'hiking', noun: 'ОБУВКИ ЗА ПРЕХОДИ', models: ['MH100', 'MH500 MID', 'NH100', 'TREK 100'], brands: ['Quechua'], sizeType: 'shoe', baseEur: 4999, colors: ['Кафяво', 'Сиво'] },
+  { category: 'men', noun: 'МЪЖКА ТЕНИСКА', models: ['ESSENTIAL', 'DRY+', 'SPORT 500', 'TRAIN'], brands: ['Domyos', 'Adidas', 'Puma'], sizeType: 'clothing', baseEur: 1499, colors: ['Черна', 'Сива'] },
+  { category: 'women', noun: 'ДАМСКА ПОТНИК', models: ['ESSENTIAL', 'YOGA 500', 'RUN DRY', 'CARDIO'], brands: ['Domyos', 'Kiprun'], sizeType: 'clothing', baseEur: 1599, colors: ['Розова', 'Черна'] },
+  { category: 'kids', noun: 'ДЕТСКИ КОМПЛЕКТ', models: ['FIRST 100', 'PLAY 500', 'SCHOOL', 'ACTIVE'], brands: ['Domyos', 'Kipsta'], sizeType: 'clothing', baseEur: 1299, colors: ['Синьо', 'Зелено'] },
+  { category: 'accessories', noun: 'АКСЕСОАР', models: ['РАНИЦА 25Л', 'БУТИЛКА 0.8Л', 'ШАПКА', 'ЧОРАПИ 3 ЧИФТА'], brands: ['Quechua', 'Kiprun'], sizeType: 'one', baseEur: 999, colors: ['Черно', 'Синьо'] },
+  { category: 'nutrition', noun: 'ХРАНИТЕЛНА ДОБАВКА', models: ['ПРОТЕИН БАР', 'ИЗОТОНИК', 'ГЕЛ ЕНЕРГИЯ', 'МАГНЕЗИЙ'], brands: ['Domyos'], sizeType: 'one', baseEur: 799, colors: ['Микс'] },
+  { category: 'electronics', noun: 'ЕЛЕКТРОНИКА', models: ['GPS ЧАСОВНИК 100', 'ФЕНЕР 500', 'ПУЛСОМЕР', 'СТЕП БРОЯЧ'], brands: ['Kiprun', 'Garmin'], sizeType: 'one', baseEur: 4999, colors: ['Черен'] },
+];
+
+function genSizes(type: GenTemplate['sizeType'], seed: number) {
+  if (type === 'shoe') {
+    return ['40', '41', '42', '43', '44', '45'].map((s, i) => ({ size: s, stock: (seed + i) % 4 === 0 ? 0 : (seed + i) % 9 }));
+  }
+  if (type === 'clothing') {
+    return ['S', 'M', 'L', 'XL'].map((s, i) => ({ size: s, stock: (seed + i) % 5 === 0 ? 0 : (seed + i) % 12 }));
+  }
+  return [{ size: 'ЕДИНЕН', stock: 10 + (seed % 20) }];
+}
+
+function generateExtraProducts(): ProductSpec[] {
+  const out: ProductSpec[] = [];
+  GEN_TEMPLATES.forEach((t, ti) => {
+    t.models.forEach((model, mi) => {
+      const seed = ti * 7 + mi * 3 + 1;
+      const brand = t.brands[mi % t.brands.length];
+      const discounted = seed % 3 === 0;
+      const current = t.baseEur + mi * 500 + (seed % 5) * 100;
+      const colors = [t.colors[mi % t.colors.length]];
+      if (t.colors.length > 1 && mi % 2 === 0) colors.push(t.colors[(mi + 1) % t.colors.length]);
+      out.push({
+        name: `${t.noun} ${model}`,
+        slug: `${t.category}-gen-${ti}-${mi}`,
+        brand,
+        category: t.category,
+        description: `${t.noun} ${model} — изработено от ${brand} за любимия ти спорт.`,
+        currentEur: current,
+        oldEur: discounted ? Math.round(current * 1.25) : undefined,
+        ratingAvg: 4 + ((seed % 10) / 10),
+        reviewCount: 20 + seed * 13,
+        variants: colors.map((color) => ({ color, sizes: genSizes(t.sizeType, seed) })),
+      });
+    });
+  });
+  return out;
+}
+
+PRODUCTS.push(...generateExtraProducts());
 
 function buildAttributes(spec: ProductSpec): ProductAttribute[] {
   const rows: { section: ProductAttribute['section']; label: string; value: string }[] = [
