@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Headers,
+  Param,
+  Post,
+  type RawBodyRequest,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { type Request } from 'express';
@@ -55,6 +66,22 @@ export class OrdersController {
   @Post('checkout/confirm')
   confirm(@Body() dto: ConfirmPaymentDto, @Req() req: Request): Promise<OrderDto> {
     return this.orders.confirmSandbox(dto.paymentIntentId, dto.succeed, this.cartId(req));
+  }
+
+  // Real-Stripe payment finalization. Inactive in sandbox mode (no keys).
+  @Post('checkout/webhook')
+  async webhook(
+    @Req() req: RawBodyRequest<Request>,
+    @Headers('stripe-signature') signature: string,
+  ): Promise<{ received: true }> {
+    if (!req.rawBody || !signature) {
+      throw new BadRequestException('Missing webhook payload or signature');
+    }
+    try {
+      return await this.orders.handleStripeEvent(req.rawBody, signature);
+    } catch (err) {
+      throw new BadRequestException(err instanceof Error ? err.message : 'Webhook error');
+    }
   }
 
   @UseGuards(JwtAuthGuard)

@@ -14,7 +14,7 @@ const styles: Record<Variant, string> = {
 export function Button({ variant = 'primary', className = '', ...props }: ButtonProps) {
   return (
     <button
-      className={`rounded px-4 py-2 font-medium transition-colors disabled:opacity-50 ${styles[variant]} ${className}`}
+      className={`rounded px-4 py-2 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 disabled:opacity-50 ${styles[variant]} ${className}`}
       {...props}
     />
   );

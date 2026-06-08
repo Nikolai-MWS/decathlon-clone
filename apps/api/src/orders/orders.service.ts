@@ -135,12 +135,19 @@ export class OrdersService {
     if (!order) throw new NotFoundException('Order not found');
     if (order.status !== 'pending') return this.getOrder(order.id);
 
+    await this.finalize(order, succeed);
+    if (succeed && cartId) await this.cart.clearCart(cartId);
+    return this.getOrder(order.id);
+  }
+
+  /** Mark an order paid (decrementing stock in a transaction) or failed.
+   * Shared by the sandbox confirm endpoint and the Stripe webhook. */
+  private async finalize(order: Order, succeed: boolean): Promise<void> {
     if (!succeed) {
       order.status = 'failed';
       await this.orders.save(order);
-      return this.getOrder(order.id);
+      return;
     }
-
     await this.dataSource.transaction(async (manager) => {
       for (const item of order.items) {
         if (item.skuId) {
@@ -155,9 +162,25 @@ export class OrdersService {
       order.status = 'paid';
       await manager.save(order);
     });
+  }
 
-    if (cartId) await this.cart.clearCart(cartId);
-    return this.getOrder(order.id);
+  /** Handle a verified Stripe webhook event (real-Stripe path). */
+  async handleStripeEvent(rawBody: Buffer, signature: string): Promise<{ received: true }> {
+    const event = this.payments.verifyWebhook(rawBody, signature);
+    if (
+      event.type === 'payment_intent.succeeded' ||
+      event.type === 'payment_intent.payment_failed'
+    ) {
+      const intent = event.data.object as { id: string };
+      const order = await this.orders.findOne({
+        where: { paymentIntentId: intent.id },
+        relations: { items: true },
+      });
+      if (order && order.status === 'pending') {
+        await this.finalize(order, event.type === 'payment_intent.succeeded');
+      }
+    }
+    return { received: true };
   }
 
   async listOrders(userId: string): Promise<OrderDto[]> {

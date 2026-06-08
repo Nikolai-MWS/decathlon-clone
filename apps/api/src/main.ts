@@ -7,7 +7,8 @@ import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/all-exceptions.filter';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  // rawBody enables Stripe webhook signature verification.
+  const app = await NestFactory.create(AppModule, { rawBody: true });
   const config = app.get(ConfigService);
   app.use(cookieParser());
   app.setGlobalPrefix('api');

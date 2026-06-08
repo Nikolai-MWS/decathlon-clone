@@ -43,4 +43,13 @@ export class PaymentsService {
     }
     return { id: `pi_sandbox_${randomUUID()}`, clientSecret: null };
   }
+
+  /** Verify and parse a Stripe webhook. Throws if Stripe isn't configured. */
+  verifyWebhook(rawBody: Buffer, signature: string): Stripe.Event {
+    const secret = this.config.get<string>('stripe.webhookSecret');
+    if (!this.stripe || !secret) {
+      throw new Error('Stripe webhook is not configured');
+    }
+    return this.stripe.webhooks.constructEvent(rawBody, signature, secret);
+  }
 }

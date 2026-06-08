@@ -1,21 +1,25 @@
+import { lazy } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import Layout from './components/Layout';
-import HomePage from './features/catalog/HomePage';
-import CategoryPage from './features/catalog/CategoryPage';
-import ProductDetailPage from './features/catalog/ProductDetailPage';
-import SearchPage from './features/catalog/SearchPage';
-import CartPage from './features/cart/CartPage';
-import LoginPage from './features/auth/LoginPage';
-import RegisterPage from './features/auth/RegisterPage';
-import AccountPage from './features/auth/AccountPage';
 import RequireAuth from './features/auth/RequireAuth';
-import CheckoutPage from './features/checkout/CheckoutPage';
-import OrderConfirmationPage from './features/checkout/OrderConfirmationPage';
-import OrdersPage from './features/checkout/OrdersPage';
-import WishlistPage from './features/wishlist/WishlistPage';
-import StoreLocatorPage from './features/content/StoreLocatorPage';
-import BlogPage from './features/content/BlogPage';
-import HealthPage from './features/health/HealthPage';
+
+// Route-level code splitting: each page is its own lazily-loaded chunk.
+const HomePage = lazy(() => import('./features/catalog/HomePage'));
+const CategoryPage = lazy(() => import('./features/catalog/CategoryPage'));
+const ProductDetailPage = lazy(() => import('./features/catalog/ProductDetailPage'));
+const SearchPage = lazy(() => import('./features/catalog/SearchPage'));
+const CartPage = lazy(() => import('./features/cart/CartPage'));
+const LoginPage = lazy(() => import('./features/auth/LoginPage'));
+const RegisterPage = lazy(() => import('./features/auth/RegisterPage'));
+const AccountPage = lazy(() => import('./features/auth/AccountPage'));
+const CheckoutPage = lazy(() => import('./features/checkout/CheckoutPage'));
+const OrderConfirmationPage = lazy(() => import('./features/checkout/OrderConfirmationPage'));
+const OrdersPage = lazy(() => import('./features/checkout/OrdersPage'));
+const WishlistPage = lazy(() => import('./features/wishlist/WishlistPage'));
+const StoreLocatorPage = lazy(() => import('./features/content/StoreLocatorPage'));
+const BlogPage = lazy(() => import('./features/content/BlogPage'));
+const NotFoundPage = lazy(() => import('./features/content/NotFoundPage'));
+const HealthPage = lazy(() => import('./features/health/HealthPage'));
 
 export const router = createBrowserRouter([
   {
@@ -51,6 +55,7 @@ export const router = createBrowserRouter([
         ),
       },
       { path: 'health', element: <HealthPage /> },
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
 ]);

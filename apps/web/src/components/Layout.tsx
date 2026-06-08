@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import LanguageSwitcher from './LanguageSwitcher';
 import SearchBar from './SearchBar';
@@ -13,6 +14,12 @@ export default function Layout() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:text-brand"
+      >
+        Към съдържанието
+      </a>
       <header className="bg-brand text-white">
         <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3">
           <Link to="/" className="text-xl font-extrabold tracking-wide">
@@ -42,8 +49,10 @@ export default function Layout() {
         </nav>
       </header>
 
-      <main className="flex-1 px-4 py-6">
-        <Outlet />
+      <main id="main" className="flex-1 px-4 py-6">
+        <Suspense fallback={<p className="text-center text-gray-500">Зареждане…</p>}>
+          <Outlet />
+        </Suspense>
       </main>
 
       <footer className="mt-10 bg-gray-100 px-4 py-8 text-sm text-gray-600">
