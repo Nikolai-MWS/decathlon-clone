@@ -1,8 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, it, expect } from 'vitest';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { describe, it, expect, vi } from 'vitest';
 import { type ProductCardDto } from '@decathlon/shared';
 import { ProductCard } from './ProductCard';
+
+// WishlistButton fetches the wishlist; stub the client so the card renders standalone.
+vi.mock('../lib/apiClient', () => ({
+  apiClient: { getWishlist: vi.fn().mockResolvedValue([]) },
+}));
 
 const base: ProductCardDto = {
   id: '1',
@@ -22,10 +28,13 @@ const base: ProductCardDto = {
 };
 
 function renderCard(product: ProductCardDto) {
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <MemoryRouter>
-      <ProductCard product={product} />
-    </MemoryRouter>,
+    <QueryClientProvider client={client}>
+      <MemoryRouter>
+        <ProductCard product={product} />
+      </MemoryRouter>
+    </QueryClientProvider>,
   );
 }
 

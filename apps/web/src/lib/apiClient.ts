@@ -119,4 +119,13 @@ export const apiClient = {
   getReviews: (slug: string) => getJson<ReviewsResponseDto>(`/products/${slug}/reviews`),
   createReview: (slug: string, input: CreateReviewInput) =>
     sendJson<ReviewDto>('POST', `/products/${slug}/reviews`, input),
+
+  getWishlist: () => getJson<ProductCardDto[]>('/wishlist'),
+  addToWishlist: (productId: string) =>
+    sendJson<ProductCardDto[]>('POST', '/wishlist/items', { productId }),
+  removeFromWishlist: (productId: string) =>
+    sendJson<ProductCardDto[]>('DELETE', `/wishlist/items/${productId}`),
+  subscribeNewsletter: (email: string) => sendJson<{ ok: true }>('POST', '/newsletter', { email }),
+  notifyWhenInStock: (skuId: string, email: string) =>
+    sendJson<{ ok: true }>('POST', '/stock-notifications', { skuId, email }),
 };

@@ -12,6 +12,9 @@ import RequireAuth from './features/auth/RequireAuth';
 import CheckoutPage from './features/checkout/CheckoutPage';
 import OrderConfirmationPage from './features/checkout/OrderConfirmationPage';
 import OrdersPage from './features/checkout/OrdersPage';
+import WishlistPage from './features/wishlist/WishlistPage';
+import StoreLocatorPage from './features/content/StoreLocatorPage';
+import BlogPage from './features/content/BlogPage';
 import HealthPage from './features/health/HealthPage';
 
 export const router = createBrowserRouter([
@@ -34,6 +37,9 @@ export const router = createBrowserRouter([
           </RequireAuth>
         ),
       },
+      { path: 'wishlist', element: <WishlistPage /> },
+      { path: 'stores', element: <StoreLocatorPage /> },
+      { path: 'blog', element: <BlogPage /> },
       { path: 'checkout', element: <CheckoutPage /> },
       { path: 'orders/:id', element: <OrderConfirmationPage /> },
       {

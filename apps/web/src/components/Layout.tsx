@@ -2,7 +2,9 @@ import { Outlet, Link } from 'react-router-dom';
 import LanguageSwitcher from './LanguageSwitcher';
 import SearchBar from './SearchBar';
 import CartIndicator from './CartIndicator';
+import WishlistIndicator from './WishlistIndicator';
 import AccountLink from './AccountLink';
+import NewsletterForm from './NewsletterForm';
 import { useCategories } from '../features/catalog/queries';
 
 export default function Layout() {
@@ -18,6 +20,7 @@ export default function Layout() {
           </Link>
           <SearchBar />
           <AccountLink />
+          <WishlistIndicator />
           <CartIndicator />
           <LanguageSwitcher />
         </div>
@@ -30,6 +33,11 @@ export default function Layout() {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link to="/blog" className="hover:underline">
+                Блог
+              </Link>
+            </li>
           </ul>
         </nav>
       </header>
@@ -39,8 +47,36 @@ export default function Layout() {
       </main>
 
       <footer className="mt-10 bg-gray-100 px-4 py-8 text-sm text-gray-600">
-        <div className="mx-auto max-w-7xl">
-          Decathlon Clone — portfolio project · Доставка с Speedy, Econt, BoxNow · VISA · MasterCard
+        <div className="mx-auto grid max-w-7xl gap-8 sm:grid-cols-3">
+          <div>
+            <h3 className="mb-2 font-semibold text-gray-800">DECATHLON</h3>
+            <ul className="space-y-1">
+              <li>
+                <Link to="/stores" className="hover:underline">
+                  Спортни магазини
+                </Link>
+              </li>
+              <li>
+                <Link to="/blog" className="hover:underline">
+                  Блог
+                </Link>
+              </li>
+              <li>
+                <Link to="/wishlist" className="hover:underline">
+                  Любими
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="mb-2 font-semibold text-gray-800">Доставка и плащане</h3>
+            <p>Speedy · Econt · Sameday · BoxNow</p>
+            <p>VISA · MasterCard · Apple Pay · PayPal</p>
+          </div>
+          <NewsletterForm />
+        </div>
+        <div className="mx-auto mt-6 max-w-7xl border-t border-gray-200 pt-4 text-xs text-gray-400">
+          Decathlon Clone — portfolio project
         </div>
       </footer>
     </div>

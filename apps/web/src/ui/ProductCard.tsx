@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { type ProductCardDto } from '@decathlon/shared';
 import { Price } from './Price';
 import { RatingStars } from './RatingStars';
+import WishlistButton from '../features/wishlist/WishlistButton';
 
 export function ProductCard({ product }: { product: ProductCardDto }) {
   return (
@@ -15,6 +16,9 @@ export function ProductCard({ product }: { product: ProductCardDto }) {
             НАМАЛЕНИЕ
           </span>
         )}
+        <div className="absolute right-2 top-2 z-10">
+          <WishlistButton productId={product.id} />
+        </div>
         {product.image ? (
           <img
             src={product.image}

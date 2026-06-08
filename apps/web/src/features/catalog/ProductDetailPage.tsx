@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useProduct } from './queries';
 import ProductReviews from './ProductReviews';
+import NotifyInStock from './NotifyInStock';
 import { useAddToCart } from '../cart/queries';
+import WishlistButton from '../wishlist/WishlistButton';
 import { Price } from '../../ui/Price';
 import { RatingStars } from '../../ui/RatingStars';
 import { Button } from '../../ui/Button';
@@ -64,9 +66,12 @@ export default function ProductDetailPage() {
 
         {/* Details */}
         <div>
-          <span className="text-sm font-semibold uppercase text-gray-500">
-            {product.brand.name}
-          </span>
+          <div className="flex items-start justify-between">
+            <span className="text-sm font-semibold uppercase text-gray-500">
+              {product.brand.name}
+            </span>
+            <WishlistButton productId={product.id} className="text-2xl" />
+          </div>
           <h1 className="mb-2 text-2xl font-bold">{product.name}</h1>
           <div className="mb-4">
             <RatingStars value={product.ratingAvg} reviewCount={product.reviewCount} />
@@ -143,6 +148,8 @@ export default function ProductDetailPage() {
           {addToCart.isError && (
             <p className="mt-2 text-sm text-red-600">{addToCart.error.message}</p>
           )}
+
+          {variant && <NotifyInStock skus={variant.skus} />}
         </div>
       </div>
 
