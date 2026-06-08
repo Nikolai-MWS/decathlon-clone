@@ -4,12 +4,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import configuration from './config/configuration';
 import { dataSourceOptions } from './database/data-source';
 import { HealthModule } from './health/health.module';
+import { CatalogModule } from './catalog/catalog.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [configuration] }),
     TypeOrmModule.forRoot(dataSourceOptions),
     HealthModule,
+    CatalogModule,
   ],
 })
 export class AppModule {}
