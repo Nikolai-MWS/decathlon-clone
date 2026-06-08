@@ -1,6 +1,7 @@
 import { Outlet, Link } from 'react-router-dom';
 import LanguageSwitcher from './LanguageSwitcher';
 import SearchBar from './SearchBar';
+import CartIndicator from './CartIndicator';
 import { useCategories } from '../features/catalog/queries';
 
 export default function Layout() {
@@ -15,6 +16,7 @@ export default function Layout() {
             DECATHLON
           </Link>
           <SearchBar />
+          <CartIndicator />
           <LanguageSwitcher />
         </div>
         <nav className="border-t border-white/20 bg-brand-dark">

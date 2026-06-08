@@ -5,6 +5,7 @@ import configuration from './config/configuration';
 import { dataSourceOptions } from './database/data-source';
 import { HealthModule } from './health/health.module';
 import { CatalogModule } from './catalog/catalog.module';
+import { CartModule } from './cart/cart.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { CatalogModule } from './catalog/catalog.module';
     TypeOrmModule.forRoot(dataSourceOptions),
     HealthModule,
     CatalogModule,
+    CartModule,
   ],
 })
 export class AppModule {}

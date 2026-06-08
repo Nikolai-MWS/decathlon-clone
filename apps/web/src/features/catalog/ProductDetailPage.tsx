@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useProduct } from './queries';
+import { useAddToCart } from '../cart/queries';
 import { Price } from '../../ui/Price';
 import { RatingStars } from '../../ui/RatingStars';
 import { Button } from '../../ui/Button';
@@ -11,6 +12,7 @@ export default function ProductDetailPage() {
   const [variantIndex, setVariantIndex] = useState(0);
   const [imageIndex, setImageIndex] = useState(0);
   const [selectedSku, setSelectedSku] = useState<string | null>(null);
+  const addToCart = useAddToCart();
 
   if (isLoading) return <p className="text-gray-500">Зареждане…</p>;
   if (isError || !product) return <p className="text-gray-500">Продуктът не е намерен.</p>;
@@ -124,11 +126,21 @@ export default function ProductDetailPage() {
             )}
           </div>
 
-          <Button disabled={!selectedSku} className="w-full sm:w-auto">
-            Добави в количката
+          <Button
+            disabled={!selectedSku || addToCart.isPending}
+            className="w-full sm:w-auto"
+            onClick={() => selectedSku && addToCart.mutate({ skuId: selectedSku, quantity: 1 })}
+          >
+            {addToCart.isPending ? 'Добавяне…' : 'Добави в количката'}
           </Button>
           {!selectedSku && (
             <p className="mt-2 text-xs text-gray-500">Избери размер, за да продължиш.</p>
+          )}
+          {addToCart.isSuccess && selectedSku && (
+            <p className="mt-2 text-sm text-green-600">Добавено в количката ✓</p>
+          )}
+          {addToCart.isError && (
+            <p className="mt-2 text-sm text-red-600">{addToCart.error.message}</p>
           )}
         </div>
       </div>

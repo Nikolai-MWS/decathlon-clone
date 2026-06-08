@@ -40,6 +40,13 @@ export function toProductCard(product: Product): ProductCardDto {
   };
 }
 
+function compareSizes(a: string, b: string): number {
+  const na = Number(a);
+  const nb = Number(b);
+  if (!Number.isNaN(na) && !Number.isNaN(nb)) return na - nb;
+  return a.localeCompare(b);
+}
+
 export function toProductDetail(product: Product, breadcrumb: BreadcrumbDto[]): ProductDetailDto {
   const variants = [...(product.variants ?? [])].map((variant) => ({
     id: variant.id,
@@ -48,7 +55,9 @@ export function toProductDetail(product: Product, breadcrumb: BreadcrumbDto[]): 
     images: [...(variant.images ?? [])]
       .sort((a, b) => a.position - b.position)
       .map((image) => image.url),
-    skus: [...(variant.skus ?? [])].map((sku) => ({
+    skus: [...(variant.skus ?? [])]
+      .sort((x, y) => compareSizes(x.size, y.size))
+      .map((sku) => ({
       id: sku.id,
       size: sku.size,
       stock: sku.stock,

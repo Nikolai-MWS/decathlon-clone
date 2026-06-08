@@ -4,6 +4,7 @@ import HomePage from './features/catalog/HomePage';
 import CategoryPage from './features/catalog/CategoryPage';
 import ProductDetailPage from './features/catalog/ProductDetailPage';
 import SearchPage from './features/catalog/SearchPage';
+import CartPage from './features/cart/CartPage';
 import HealthPage from './features/health/HealthPage';
 
 export const router = createBrowserRouter([
@@ -15,6 +16,7 @@ export const router = createBrowserRouter([
       { path: 'c/:slug', element: <CategoryPage /> },
       { path: 'p/:slug', element: <ProductDetailPage /> },
       { path: 'search', element: <SearchPage /> },
+      { path: 'cart', element: <CartPage /> },
       { path: 'health', element: <HealthPage /> },
     ],
   },

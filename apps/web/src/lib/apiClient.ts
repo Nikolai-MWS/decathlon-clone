@@ -1,5 +1,6 @@
 import {
   type BrandDto,
+  type CartDto,
   type CategoryNodeDto,
   type FacetsDto,
   type HealthStatus,
@@ -15,6 +16,20 @@ const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api';
 async function getJson<T>(path: string): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, { credentials: 'include' });
   if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+  return (await res.json()) as T;
+}
+
+async function sendJson<T>(method: string, path: string, body?: unknown): Promise<T> {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method,
+    credentials: 'include',
+    headers: body ? { 'Content-Type': 'application/json' } : undefined,
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) {
+    const err = (await res.json().catch(() => null)) as { message?: string } | null;
+    throw new Error(err?.message ?? `Request failed: ${res.status}`);
+  }
   return (await res.json()) as T;
 }
 
@@ -45,4 +60,11 @@ export const apiClient = {
   getSuggestions: (q: string) =>
     getJson<SuggestionDto[]>(`/products/suggest?q=${encodeURIComponent(q)}`),
   getProduct: (slug: string) => getJson<ProductDetailDto>(`/products/${slug}`),
+
+  getCart: () => getJson<CartDto>('/cart'),
+  addCartItem: (skuId: string, quantity: number) =>
+    sendJson<CartDto>('POST', '/cart/items', { skuId, quantity }),
+  updateCartItem: (itemId: string, quantity: number) =>
+    sendJson<CartDto>('PATCH', `/cart/items/${itemId}`, { quantity }),
+  removeCartItem: (itemId: string) => sendJson<CartDto>('DELETE', `/cart/items/${itemId}`),
 };
