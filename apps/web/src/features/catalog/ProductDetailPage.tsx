@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useProduct } from './queries';
+import ProductReviews from './ProductReviews';
 import { useAddToCart } from '../cart/queries';
 import { Price } from '../../ui/Price';
 import { RatingStars } from '../../ui/RatingStars';
@@ -144,6 +145,8 @@ export default function ProductDetailPage() {
           )}
         </div>
       </div>
+
+      <ProductReviews slug={product.slug} />
     </div>
   );
 }

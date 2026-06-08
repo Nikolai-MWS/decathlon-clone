@@ -18,6 +18,9 @@ import {
   type ProductDetailDto,
   type ProductQuery,
   type RegisterDto,
+  type CreateReviewInput,
+  type ReviewDto,
+  type ReviewsResponseDto,
   type SuggestionDto,
 } from '@decathlon/shared';
 
@@ -112,4 +115,8 @@ export const apiClient = {
     sendJson<OrderDto>('POST', '/checkout/confirm', { paymentIntentId, succeed }),
   getOrders: () => getJson<OrderDto[]>('/orders'),
   getOrder: (id: string) => getJson<OrderDto>(`/orders/${id}`),
+
+  getReviews: (slug: string) => getJson<ReviewsResponseDto>(`/products/${slug}/reviews`),
+  createReview: (slug: string, input: CreateReviewInput) =>
+    sendJson<ReviewDto>('POST', `/products/${slug}/reviews`, input),
 };
